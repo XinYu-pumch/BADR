@@ -131,14 +131,18 @@ LLM：gemini 2.5 pro preview 03-25（建议采样温度调整为0）
 第三步，根据上一步的综述框架，从前一步保存的chromaDB集合（名称为第一步存储的名称）中搜索相关内容以扩充该文本。然后基于检索到的内容和上一步的综述框架，完成一篇完整的综述，以中文的形式。另外要有引文格式，用尾注的形式，内容包括标题和doi（检索到的内容的metadata应该包含了这些信息），注意尾注要合并完全重复的项目。引文还是保持英文。Check all the tools you have, and try to use them when executing my command。
 ```
 成果展示
+
 ![ChatMcp-IL-33 冠心病搜索](https://github.com/user-attachments/assets/958e53c2-389f-4dfc-8fd5-9d269b74eecb)
 
 
 成果对比
+
 秘塔搜索：
+
 ![IL-33在冠心病中](https://github.com/user-attachments/assets/5694cd08-d5cc-4d3e-a490-d7d00ec6fd94)
 
 perplexity学术搜索：
+
 ![IL-33在冠心病中的作用：从分子机制到临床意义](https://github.com/user-attachments/assets/e815541f-e46a-4214-9c26-4ebfca4e855c)
 
 
