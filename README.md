@@ -24,7 +24,7 @@ Bulk Academic Deep Research (BADR)散装学术深度搜索，帮助你快速撰�
 ```
 git clone https://github.com/XinYu-pumch/BADR.git
 cd BADR
-pip install r
+pip install requirements.txt
 ```
 chatmcp中安装方法（MacOS）
 
