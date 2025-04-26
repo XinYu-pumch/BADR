@@ -10,7 +10,7 @@ Bulk Academic Deep Research (BADR)散装学术深度搜索，帮助你快速撰�
 
 ## 准备工具：
 * 支持MCP服务的AI客户端
-  * 推荐chatmcp （https://github.com/daodao97/chatmcp）
+  * 推荐[chatmcp](https://github.com/daodao97/chatmcp) 
   * langflow
   * 目前暂不支持cherry studio——cherry studio默认的mcp调阅时间限制为60s，无法执行本MCP
 * 支持至少100k上下文的LLM（越长越好）
