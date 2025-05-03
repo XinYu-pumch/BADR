@@ -1,22 +1,10 @@
-# requirements.txt for literature_search_mcp_server
-
-# --- Vector Database ---
 chromadb
-
-# --- PDF Processing ---
 PyPDF2
-
-# --- HTTP Requests (Sync & Async) ---
 requests
 httpx
-
-# --- HTML Parsing (for Sci-Hub) ---
+numpy
 beautifulsoup4
 lxml
-
-# --- MCP Framework ---
-
 mcp
-
-
+marker-pdf
 python-dotenv # 如果你打算使用 .env 文件管理 API Key
