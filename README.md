@@ -1,5 +1,6 @@
-![image](https://github.com/user-attachments/assets/1fef855c-6c21-48e3-ab2d-8632273a600d)# BADR
+# BADR
 Bulk Academic Deep Research (BADR)散装学术深度搜索
+
 ✅帮助你迅速撰写高质量生物医学综述
 ✅快速扩充学术论点
 
