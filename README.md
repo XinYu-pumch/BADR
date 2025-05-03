@@ -30,13 +30,15 @@ cd BADR
 pip install requirements.txt
 ```
 chatwise中安装方法（MacOS）
+
+设置-工具-命令处填写：
 ```
 /your_path/python /your_path/literature_search_mcp_server_pro.py
 ```
 
 
 
-## 代码运行前修改（编辑literature_search_mcp_server_final_decsion.py）
+## 代码运行前修改（编辑literature_search_mcp_server_pro.py）
 
 指定ChromaDB存储路径（存储你检索到的文献原文的嵌入向量）
 ```
@@ -45,11 +47,9 @@ CHROMA_DB_PATH = "xxxxxxxxxx" # xxxx修为你的chromadb的临时路径
 ```
 配置硅基流动的api_key（用来调用硅基流动的嵌入模型），参考https://docs.siliconflow.cn/cn/userguide/introduction
 ```
-# 硅基流动 Embedding API
-SILICONFLOW_API_URL = "https://api.siliconflow.cn/v1/embeddings"
-# !!! 安全警告：切勿在生产代码中硬编码 API Key !!!
-# 建议使用环境变量或其他安全方式管理
-SILICONFLOW_API_KEY = os.getenv("SILICONFLOW_API_KEY", "xxxxxxxxxxxx") #把xxx替换为你的硅基流动的api_key
+SILICONFLOW_API_KEY = os.getenv("SILICONFLOW_API_KEY", "xxxx") # 请替换为你的真实 Key 或设置环境变量
+if SILICONFLOW_API_KEY == "xxxx":
+     logging.warning("Using a placeholder SiliconFlow API Key. Please set the SILICONFLOW_API_KEY environment variable or replace the placeholder.")
 ```
 可选择增加NCBI_EMAIL和NCBI_API_KEY，减少调用pubmed时被ban的风险
 ```
