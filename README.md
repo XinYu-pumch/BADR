@@ -15,8 +15,7 @@
 ## 准备工具：
 * 支持MCP服务的AI客户端
   * 首选chatwise pro，本工具最完美的客户端（https://chatwise.app/）
-  * 其次推荐chatmcp（https://github.com/daodao97/chatmcp），支持本工具，但其余功能相对简陋
-  * langflow
+  * 其次推荐chatmcp和langflow
   * 暂不支持cherry studio（因为有mcp调阅时间限制）
 * LLM：仅推荐gemini 2.5 pro，支持的上下文长度足够，且生成的内容较有深度
 * 轨迹流动（siliconflow.cn）的api（调阅bge-m3模型）
@@ -78,7 +77,7 @@ NCBI_API_KEY = None # 可选
 
 
 ### get_combined_abstracts
-输入参数包括db_name，功能是从指定ChromaDb集合中获取所有文献条目的摘要合集（用来传递给LLM撰写综述框架）
+功能：指定ChromaDb集合中获取所有文献的摘要（用来传递给LLM撰写综述框架）
 
 ### get_referenece
 功能：指定ChromaDb集合中获取所有文献条目的标题、doi、pmid（用来传递给LLM生成引文）
