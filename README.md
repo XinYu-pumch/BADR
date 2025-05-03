@@ -1,7 +1,8 @@
 # BADR
-Bulk Academic Deep Research (BADR)散装学术深度搜索
+## Bulk Academic Deep Research (BADR)散装学术深度搜索
 
-✅帮助你迅速撰写高质量生物医学综述
+✅迅速生成高质量生物医学综述
+
 ✅快速扩充学术论点
 
 ## 实现原理：
