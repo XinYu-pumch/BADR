@@ -1,4 +1,4 @@
-# MCO tools: BADR
+# MCP tools: BADR
 ## Bulk Academic Deep Research (BADR)散装学术深度搜索
 
 ✅迅速生成高质量生物医学综述
