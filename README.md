@@ -1,9 +1,14 @@
-# BADR
+# MCO tools: BADR
 ## Bulk Academic Deep Research (BADR)散装学术深度搜索
 
 ✅迅速生成高质量生物医学综述
 
 ✅快速扩充学术论点
+
+✅同时利用文献的摘要和原文信息
+
+✅MCP形式调用，操作简便，无需单独的程序
+
 
 ## 实现原理：
 * 使用MCP方式，从pubmed搜索指定关键词，按照相关性或时间顺序获取文献
@@ -57,7 +62,7 @@ NCBI_API_KEY = None # 可选
 ```
 
 ## MCP工具简介
-主要包含了三个工具函数
+主要包含了四个工具函数
 ### search_literature
 
 #### 输入参数
