@@ -128,6 +128,10 @@ chatwise中agent，系统提示词如下：
 
 AI将自动帮你生成综述！
 
+参考效果：
+![longshot20250505181819](https://github.com/user-attachments/assets/7d83023c-0876-4f0a-a3db-f0bffd22a743)
+
+
 
 
 
