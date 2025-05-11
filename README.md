@@ -114,23 +114,25 @@ chatwise中agent，系统提示词如下：
 
  请务必严格遵照上述指令进行你的操作。
 ```
-当写完后可以单独输入prompt完善引文信息
-```
-最后为该文章生成完整的引文格式：首先将前一步中完整的综述传递给get_reference工具，get_reference工具将从前文中的chromadb集合中提取文献信息，为该文章生成尾注。然后基于文献列表，将正文中的pmid替换为尾注中的序号（正文中如果一处内容对应多个引用，则按引用的序号大小重新排列）。并且为正文添加尾注，尾注严格为get_reference生成的格式化的尾注列表。该步骤无需使用sequential_thinking工具。正文内容本身不要改变。![image](https://github.com/user-attachments/assets/590a2b9a-2a5d-49ef-98c5-17a041ddd734)
 
-```
 
 模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65536
 
 输入的提示词类似：
 ```
 关键词：IL-33和冠心病；
-保存集合名称：0504_IL33_9；
-综述主题：IL-33在冠心病中的作用
+保存集合名称：0509_IL33_para_openrouter_gemini2；
+综述主题：IL-33在冠心病中的作用 
+综述字数：12000字 
 ```
 
 AI将自动帮你生成综述！
 
+当写完后可以单独输入prompt完善引文信息
+```
+最后为该文章生成完整的引文格式：首先将前一步中完整的综述传递给get_reference工具，get_reference工具将从前文中的chromadb集合中提取文献信息，为该文章生成尾注。然后基于文献列表，将正文中的pmid替换为尾注中的序号（正文中如果一处内容对应多个引用，则按引用的序号大小重新排列）。并且为正文添加尾注，尾注严格为get_reference生成的格式化的尾注列表。该步骤无需使用sequential_thinking工具。正文内容本身不要改变。![image](https://github.com/user-attachments/assets/590a2b9a-2a5d-49ef-98c5-17a041ddd734)
+
+```
 参考效果：
 ![longshot20250505181819](https://github.com/user-attachments/assets/7d83023c-0876-4f0a-a3db-f0bffd22a743)
 
