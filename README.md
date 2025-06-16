@@ -139,7 +139,8 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 
 
 **第三步，利用综述框架填充内容。注：该步骤非常消耗tokens
-3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败**
+
+**3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败**
 
 
 提示词示例：
