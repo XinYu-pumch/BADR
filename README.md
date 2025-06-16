@@ -20,6 +20,9 @@
 * 基于所有文献的摘要搭建分层分点的综述框架
 * 利用RAG方法，以综述框架索引文献文本块，填充综述框架，形成综述
 
+  ![Uploading LLM.png…]()
+
+
 ## 准备工具：
 * 支持MCP服务的AI客户端
   * 首选chatwise pro（付费版），本工具最完美的客户端 https://chatwise.app
