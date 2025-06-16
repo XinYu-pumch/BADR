@@ -110,7 +110,7 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 ## 使用方法
 以chatwise为例，模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65535
 
-第一步，下载文献并向量化
+**第一步，下载文献并向量化**
 
 提示词示例：
 ```
@@ -118,7 +118,7 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 ```
 ![步骤一](https://github.com/user-attachments/assets/b5475bdd-7d77-470d-9f11-3e1b0c82733c)
 
-第二步，生成综述框架。该步骤非常考验LLM能力，且决定了后续综述的质量
+**第二步，生成综述框架。该步骤非常考验LLM能力，且决定了后续综述的质量**
 
 提示词示例：
 ```
@@ -134,8 +134,8 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 ![摘要](https://github.com/user-attachments/assets/3c0d7a9a-7ba8-4945-9cf1-cc5fba7da9a9)
 
 
-第三步，利用综述框架填充内容。注：该步骤非常消耗tokens
-3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败
+**第三步，利用综述框架填充内容。注：该步骤非常消耗tokens
+3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败**
 
 
 提示词示例：
@@ -160,7 +160,7 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 ![完整版](https://github.com/user-attachments/assets/ecd63a47-ec9a-41c8-8703-22f30abf250d)
 
 
-3.2 若只是想快速写综述，可以直接检索整个综述框架
+**3.2 若只是想快速写综述，可以直接检索整个综述框架**
 
 提示词
 ```
@@ -175,8 +175,9 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 ```
 ![综述II](https://github.com/user-attachments/assets/05e49627-32ab-44f8-a37e-353ba8867360)
 
-四、生成引文（该步骤非常慢，且不一定有必要用AI操作，因为可以手动修改）
+**四、生成引文（该步骤非常慢，且不一定有必要用AI操作，因为可以手动修改）**
 
+![引文版](https://github.com/user-attachments/assets/1243655d-68ca-4f90-b3e9-82248c101a3b)
 
 
 
