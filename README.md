@@ -22,12 +22,12 @@
 
 ## 准备工具：
 * 支持MCP服务的AI客户端
-  * 首选chatwise pro，本工具最完美的客户端（https://chatwise.app/），但需要付费
+  * 首选chatwise pro（付费版），本工具最完美的客户端 https://chatwise.app
   * 其次推荐chatmcp和langflow
   * **暂不支持cherry studio**（因为有mcp调阅时间限制）
 * LLM
-*  首选**gemini 2.5 pro**，支持的上下文长度足够，且生成的内容较有深度；建议使用GCP-vertex版本（通常截断率低），若无渠道，可使用国内号商（推荐：https://api.shubiaobiao.com/   或者 https://poloai.top/）
-*  备选：doubao-1.6（非thinking版），配置方法可参考cherry studio（https://docs.cherry-ai.com/websearch/volcengine）
+*  首选**gemini 2.5 pro**，支持的上下文长度足够，且生成的内容较有深度；建议使用GCP-vertex版本（通常截断率低），若无渠道，可使用国内号商（推荐：https://api.shubiaobiao.com   或者 https://poloai.top
+*  备选：doubao-1.6（非thinking版），配置方法可参考cherry studio教程：https://docs.cherry-ai.com/websearch/volcengine
 * 硅基流动（siliconflow.cn）的api（调取嵌入模型bge-m3）
 * （非必须）ncbi的api和邮箱账号（在账号-设置中）
 
@@ -47,9 +47,10 @@ chatwise中安装方法（MacOS）
 
 
 
-## 代码运行前修改（literature_search_mcp_server_pro_2.0.py）
+## 代码运行前修改（literature_search_mcp_server_pro_2.0.py文件）
 
-（直接ctrl+F搜索”#设置“，为所有待改的部分）
+可以直接ctrl+F搜索”#设置“，为所有待改的部分
+
 指定ChromaDB存储路径（存储你检索到的文献原文的嵌入向量）
 ```
 # ChromaDB
@@ -64,7 +65,7 @@ SILICONFLOW_API_KEY = os.getenv("SILICONFLOW_API_KEY", "xxxx") # 请替换为你
 NCBI_EMAIL = "your.email@example.com" # 替换成你的邮箱
 NCBI_API_KEY = None # 可选
 ```
-
+设置marker的工作效率
 ```
 MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能差建议选择为1
 ```
@@ -108,13 +109,18 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 
 ## 使用方法
 以chatwise为例，模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65535
+
 第一步，下载文献并向量化
+
+提示词示例：
 ```
 使用search_literature工具， pubmed上检索IL-33和冠心病，关键词用英文形式，然后获取最相关的前30篇文章，将相关信息保存入本地数据库，集合名称为0616_IL33 
 ```
 ![步骤一](https://github.com/user-attachments/assets/b5475bdd-7d77-470d-9f11-3e1b0c82733c)
 
-第二步，生成综述框架。该步骤非常考验LLM能力，且决定了后续综述的质量。
+第二步，生成综述框架。该步骤非常考验LLM能力，且决定了后续综述的质量
+
+提示词示例：
 ```
 综述框架写完后，使用search_text_from_chromadb工具，根据一级标题，将综述框架分为几个片段，然后分批次检索综述框架片段，每批都检索一级标题及其所属的子标题，在前文的ChromaDB 集合中搜索相关内容，用“\n”符号分割论点（请务必确保 delimiter 参数的值严格为 “\n” (单个换行符)，绝不能是 “\\n” (转义的换行符)），每一个论点检索7个文本块，然后基于基于检索的综述内容片段、所有检索到的文本块、文本块的Source Details，撰写综述片段。综述片段的要求：
 - 以中文的形式； 
@@ -131,6 +137,8 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 第三步，利用综述框架填充内容。注：该步骤非常消耗tokens
 3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败
 
+
+提示词示例：
 ```
 综述框架写完后，使用search_text_from_chromadb工具，根据一级标题，将综述框架分为几个片段，然后分批次检索综述框架片段，每批都检索一级标题及其所属的子标题，在前文的ChromaDB 集合中搜索相关内容，用“\n”符号分割论点（请务必确保 delimiter 参数的值严格为 “\n” (单个换行符)，绝不能是 “\\n” (转义的换行符)），每一个论点检索7个文本块，然后基于基于检索的综述内容片段、所有检索到的文本块、文本块的Source Details，撰写综述片段。综述片段的要求：
 - 以中文的形式； 
@@ -141,6 +149,34 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 - 确保所有的综述框架片段都被执行，不要有遗漏 ；
 请严格执行上述要求，不要遗漏。 
 ```
+![综述片段](https://github.com/user-attachments/assets/df3240d5-c872-4a52-9278-977903c230ff)
+
+然后整合为一篇完整的综述。可以适当添加一些提示词完善综述。
+
+提示词：
+```
+接下来，将上文的中文综述片段整合成一篇完整的文章的综述。请调取前文中完整的中文综述片段，不要有内容的遗漏，或擅自概括。另外综述使用同一的标题分级格式，如一级标题可以用中文数字（一、二、三），二级标题为阿拉伯数字（比如在第三部分中，第一点为3.1），三级标题也是阿拉伯数字（比如3.1下的第一点，为3.1.1） 
+```
+![完整版](https://github.com/user-attachments/assets/ecd63a47-ec9a-41c8-8703-22f30abf250d)
+
+
+3.2 若只是想快速写综述，可以直接检索整个综述框架
+
+提示词
+```
+综述框架写完后，使用search_text_from_chromadb工具，检索上一步的综述框架，在前文的ChromaDB 集合中搜索相关内容，综述框架用"\n"符号分割论点（请务必确保 delimiter 参数的值严格为 "\n" (单个换行符)，绝不能是 "\\n" (转义的换行符)），每一个论点检索7个文本块。然后基于所有检索到的文本块、文本块的Source Details和上一步的综述框架，完成一篇完整的综述。
+综述的要求：
+-以中文的形式；
+- 每个点尽可能清晰、详尽地阐释； 
+- 综述正文部分大约12000字左右。 
+- 尽可能使用学术语言；
+- 正文中要有引文，引文信息为文本块来源信息（Source Details）中指定的PMID，直接在正文中将对应的pmid插入即可，无需使用尾注的形式；
+- 请严格执行上述要求，不要遗漏
+```
+![综述II](https://github.com/user-attachments/assets/05e49627-32ab-44f8-a37e-353ba8867360)
+
+四、生成引文（该步骤非常慢，且不一定有必要用AI操作，因为可以手动修改）
+
 
 
 
