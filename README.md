@@ -9,22 +9,27 @@
 
 ✅MCP形式调用，操作简便，无需单独的程序
 
+✅文献文本及向量数据库完全本地化
+
 
 ## 实现原理：
 * 使用MCP方式，从pubmed搜索指定关键词，按照相关性或时间顺序获取文献
-* 使用sci-hub或PMC，获得文献的原文（若无，则用摘要替代）
-* 基于语意分隔，将文献原文分块，存储在本地ChromaDb向量数据库
-* 基于所有文献的摘要搭建综述框架
-* 利用RAG方法，填充综述框架，形成综述
+* 使用sci-hub或PMC，获得文献的原文pdf（若无，则用摘要替代）
+* 使用marker将pdf转化为markdown格式，并清理（如去除引文等）
+* 基于文本段落，将文献原文分块，存储在本地ChromaDb向量数据库
+* 基于所有文献的摘要搭建分层分点的综述框架
+* 利用RAG方法，以综述框架索引文献文本块，填充综述框架，形成综述
 
 ## 准备工具：
 * 支持MCP服务的AI客户端
-  * 首选chatwise pro，本工具最完美的客户端（https://chatwise.app/）
+  * 首选chatwise pro，本工具最完美的客户端（https://chatwise.app/），但需要付费
   * 其次推荐chatmcp和langflow
-  * 暂不支持cherry studio（因为有mcp调阅时间限制）
-* LLM：仅推荐gemini 2.5 pro，支持的上下文长度足够，且生成的内容较有深度（备注：推荐openrouter付费版本，官网版本容易截断）
-* 轨迹流动（siliconflow.cn）的api（调阅bge-m3模型）
-* （可选）ncbi的api和邮箱账号
+  * **暂不支持cherry studio**（因为有mcp调阅时间限制）
+* LLM
+*  首选**gemini 2.5 pro**，支持的上下文长度足够，且生成的内容较有深度；建议使用GCP-vertex版本（通常截断率低），若无渠道，可使用国内号商（推荐：https://api.shubiaobiao.com/   或者 https://poloai.top/）
+*  备选：doubao-1.6（非thinking版），配置方法可参考cherry studio（https://docs.cherry-ai.com/websearch/volcengine）
+* 硅基流动（siliconflow.cn）的api（调取嵌入模型bge-m3）
+* （非必须）ncbi的api和邮箱账号（在账号-设置中）
 
 
 ## 安装方法
@@ -37,13 +42,14 @@ chatwise中安装方法（MacOS）
 
 设置-工具-命令处填写：
 ```
-/your_path/python /your_path/literature_search_mcp_server_pro.py
+/your_path/python /your_path/literature_search_mcp_server_pro_2.0.py
 ```
 
 
 
-## 代码运行前修改（编辑literature_search_mcp_server_pro.py）
+## 代码运行前修改（literature_search_mcp_server_pro_2.0.py）
 
+（直接ctrl+F搜索”#设置“，为所有待改的部分）
 指定ChromaDB存储路径（存储你检索到的文献原文的嵌入向量）
 ```
 # ChromaDB
@@ -52,13 +58,15 @@ CHROMA_DB_PATH = "xxxxxxxxxx" # xxxx修为你的chromadb的临时路径
 配置硅基流动的api_key（用来调用硅基流动的嵌入模型），参考https://docs.siliconflow.cn/cn/userguide/introduction
 ```
 SILICONFLOW_API_KEY = os.getenv("SILICONFLOW_API_KEY", "xxxx") # 请替换为你的真实 Key 或设置环境变量
-if SILICONFLOW_API_KEY == "xxxx":
-     logging.warning("Using a placeholder SiliconFlow API Key. Please set the SILICONFLOW_API_KEY environment variable or replace the placeholder.")
 ```
 可选择增加NCBI_EMAIL和NCBI_API_KEY，减少调用pubmed时被ban的风险
 ```
 NCBI_EMAIL = "your.email@example.com" # 替换成你的邮箱
 NCBI_API_KEY = None # 可选
+```
+
+```
+MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能差建议选择为1
 ```
 
 ## MCP工具简介
@@ -74,8 +82,8 @@ NCBI_API_KEY = None # 可选
 * num_results（返还的结果数量，默认为20）
 #### 功能
 * 在pubmed检索关键词，根据日期或相关性获得前几个结果，然后使用sci-hub或PMC获得文献的pdf原文（若无原文，则以摘要替代）并下载；
-* 利用marker将pdf转化为md；
-* 利用硅基流动的bge-m3嵌入模型，对原文及摘要作语意切割，然后存储到本地的ChromaDb中
+* 利用marker将pdf转化为md，并进行初步清洗（去除引文）
+* 利用硅基流动的bge-m3嵌入模型，对原文及摘要作文本分块（基于段落，若段落过长，则再基于句号），然后存储到本地的ChromaDb中
 * 将所有文献的摘要单独保存
 * 将所有文献的标题、doi、pmid单独保存
 
@@ -99,43 +107,40 @@ NCBI_API_KEY = None # 可选
 
 
 ## 使用方法
-chatwise中agent，系统提示词如下：
+以chatwise为例，模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65535
+第一步，下载文献并向量化
+```
+使用search_literature工具， pubmed上检索IL-33和冠心病，关键词用英文形式，然后获取最相关的前30篇文章，将相关信息保存入本地数据库，集合名称为0616_IL33 
+```
+![步骤一](https://github.com/user-attachments/assets/b5475bdd-7d77-470d-9f11-3e1b0c82733c)
+
+第二步，生成综述框架。该步骤非常考验LLM能力，且决定了后续综述的质量。
+```
+综述框架写完后，使用search_text_from_chromadb工具，根据一级标题，将综述框架分为几个片段，然后分批次检索综述框架片段，每批都检索一级标题及其所属的子标题，在前文的ChromaDB 集合中搜索相关内容，用“\n”符号分割论点（请务必确保 delimiter 参数的值严格为 “\n” (单个换行符)，绝不能是 “\\n” (转义的换行符)），每一个论点检索7个文本块，然后基于基于检索的综述内容片段、所有检索到的文本块、文本块的Source Details，撰写综述片段。综述片段的要求：
+- 以中文的形式； 
+- 每个点尽可能清晰、详尽地阐释，每个片段大概4000-6000字；
+ - 正文中要有引文，引文信息为文本块来源信息（Source Details）中指定的PMID，直接在正文中将对应的pmid插入即可，无需使用尾注的形式； 
+- 前一个综述框架片段的检索后，继续自动检索下一个综述框架片段；
+- 使用统一的分级标签；
+- 确保所有的综述框架片段都被执行，不要有遗漏 ；
+请严格执行上述要求，不要遗漏。 
+```
+![摘要](https://github.com/user-attachments/assets/3c0d7a9a-7ba8-4945-9cf1-cc5fba7da9a9)
+
+
+第三步，利用综述框架填充内容。注：该步骤非常消耗tokens
+3.1 若想要内容更有深度，可以对综述框架分批检索——该步骤同样考验LLM能力，亲测只有gemini 2.5pro和doubao-1.6可以实现，其余flag-LLM（gpt4.1、deepseek-R1、grok3）都失败
 
 ```
-你是一个生命医学专家，你将接收一个关键词、数据库名称和待研究主题，然后执行如下操作：
-
-第一步，首先使用search_literature工具， pubmed上检索用户发送给你的关键词，关键词用英文形式检索，获取最相关的前30篇文章，将相关信息保存入本地数据库，集合名称为为用户发送给你的。
-
-
-第二步，接着使用get_combined_abstracts工具，从前一步的chromadb集合中获取预存的所有摘要的合并文本（存储在Metadata中），然后以此写一篇生命科学综述的框架，主题为用户发送给你的。要求尽可能分点，涵盖的维度尽可能详实，然后将这个综述框架返还为一个文本，其中每个分点之间都要换行，分论点的结尾都以特殊的符号“\n”分结束。综述框架以英文形式呈现。
-
-第三步，综述框架写完后，使用search_text_from_chromadb工具，检索上一步的综述框架，在前文的ChromaDB 集合中搜索相关内容，综述框架用"\n"符号分割论点（请务必确保 delimiter 参数的值严格为 "\n" (单个换行符)，绝不能是 "\\n" (转义的换行符)），每一个论点检索7个文本块。然后基于所有检索到的文本块、文本块的Source Details，以上一步的综述框架为参考，完成一篇完整的综述，并严格遵照如下要求： 1）综述以中文的形式，用学术语言的口吻； 2）逻辑清晰，减少赘述，减少重复的内容，不用完全遵循综述框架； 3）综述正文部分大约8000字左右。 写完综述后，再为综述添加引文，引文的要求： 1）引文信息使用文本块来源信息（Source Details）中指定的PMID；2）直接在正文中将对应的pmid插入即可，无需使用尾注的形式。 
-
-
- 请务必严格遵照上述指令进行你的操作。
+综述框架写完后，使用search_text_from_chromadb工具，根据一级标题，将综述框架分为几个片段，然后分批次检索综述框架片段，每批都检索一级标题及其所属的子标题，在前文的ChromaDB 集合中搜索相关内容，用“\n”符号分割论点（请务必确保 delimiter 参数的值严格为 “\n” (单个换行符)，绝不能是 “\\n” (转义的换行符)），每一个论点检索7个文本块，然后基于基于检索的综述内容片段、所有检索到的文本块、文本块的Source Details，撰写综述片段。综述片段的要求：
+- 以中文的形式； 
+- 每个点尽可能清晰、详尽地阐释，每个片段大概4000-6000字；
+ - 正文中要有引文，引文信息为文本块来源信息（Source Details）中指定的PMID，直接在正文中将对应的pmid插入即可，无需使用尾注的形式； 
+- 前一个综述框架片段的检索后，继续自动检索下一个综述框架片段；
+- 使用统一的分级标签；
+- 确保所有的综述框架片段都被执行，不要有遗漏 ；
+请严格执行上述要求，不要遗漏。 
 ```
-
-
-模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65536
-
-输入的提示词类似：
-```
-关键词：IL-33和冠心病；
-保存集合名称：0509_IL33_para_openrouter_gemini2；
-综述主题：IL-33在冠心病中的作用 
-综述字数：12000字 
-```
-
-AI将自动帮你生成综述！
-
-当写完后可以单独输入prompt完善引文信息
-```
-最后为该文章生成完整的引文格式：首先将前一步中完整的综述传递给get_reference工具，get_reference工具将从前文中的chromadb集合中提取文献信息，为该文章生成尾注。然后基于文献列表，将正文中的pmid替换为尾注中的序号（正文中如果一处内容对应多个引用，则按引用的序号大小重新排列）。并且为正文添加尾注，尾注严格为get_reference生成的格式化的尾注列表。该步骤无需使用sequential_thinking工具。正文内容本身不要改变。![image](https://github.com/user-attachments/assets/590a2b9a-2a5d-49ef-98c5-17a041ddd734)
-
-```
-参考效果：
-![longshot20250505181819](https://github.com/user-attachments/assets/7d83023c-0876-4f0a-a3db-f0bffd22a743)
-
 
 
 
