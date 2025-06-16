@@ -110,6 +110,13 @@ MARKER_WORKERS = 4 #设置 marker 使用的 worker 数量，如果电脑性能�
 功能：接收输入的文字，以“\n”符号分割文本，然后批量对分割后的文本利用RAG的向量相似性方法，检索原文数据库相似的文本并返还给LLM（默认为5条）
 
 
+## 综述撰写效果
+
+Gemini 2.5 pro版：
+https://github.com/XinYu-pumch/BADR/blob/main/gemini2.5pro.pdf
+
+doubao-1.6-seed版：
+https://github.com/XinYu-pumch/BADR/blob/main/doubao.pdf
 
 ## 使用方法
 以chatwise为例，模型选择gemini2.5 pro，temperature可以适度调低（如0.1），max tokens选择 65535
