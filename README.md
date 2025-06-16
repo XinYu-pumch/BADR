@@ -30,8 +30,8 @@
   * 其次推荐chatmcp和langflow
   * **暂不支持cherry studio**（因为有mcp调阅时间限制）
 * LLM
-*  首选**gemini 2.5 pro**，支持的上下文长度足够，且生成的内容较有深度；建议使用GCP-vertex版本（通常截断率低），若无渠道，可使用国内号商（推荐：https://api.shubiaobiao.com   或者 https://poloai.top
-*  备选：doubao-1.6（非thinking版），配置方法可参考cherry studio教程：https://docs.cherry-ai.com/websearch/volcengine
+  * 首选**gemini 2.5 pro**，支持的上下文长度足够，且生成的内容较有深度；建议使用GCP-vertex版本（通常截断率低），若无渠道，可使用国内号商（推荐：https://api.shubiaobiao.com   或者 https://poloai.top
+  * 备选：doubao-1.6（非thinking版），配置方法可参考cherry studio教程：https://docs.cherry-ai.com/websearch/volcengine
 * 硅基流动（siliconflow.cn）的api（调取嵌入模型bge-m3）
 * （非必须）ncbi的api和邮箱账号（在账号-设置中）
 
