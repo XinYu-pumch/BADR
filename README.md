@@ -20,7 +20,8 @@
 * 基于所有文献的摘要搭建分层分点的综述框架
 * 利用RAG方法，以综述框架索引文献文本块，填充综述框架，形成综述
 
-  ![Uploading LLM.png…]()
+![LLM](https://github.com/user-attachments/assets/66a0f295-a376-4d65-8824-48a7e8b811f8)
+
 
 
 ## 准备工具：
